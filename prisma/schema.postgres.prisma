@@ -3,22 +3,22 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  name         String
-  passwordHash String
+  id               String      @id @default(cuid())
+  email            String      @unique
+  name             String
+  passwordHash     String
   twoFactorSecret  String?
-  twoFactorEnabled Boolean    @default(false)
-  createdAt    DateTime   @default(now())
-  sessions     Session[]
-  progress     Progress[]
-  attempts     Attempt[]
-  studyTasks   StudyTask[]
+  twoFactorEnabled Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  sessions         Session[]
+  progress         Progress[]
+  attempts         Attempt[]
+  studyTasks       StudyTask[]
 }
 
 model Session {
@@ -34,8 +34,8 @@ model Session {
 }
 
 model Problem {
-  id                 String     @id @default(cuid())
-  slug               String     @unique
+  id                 String      @id @default(cuid())
+  slug               String      @unique
   title              String
   week               Int
   weekOrder          Int
@@ -53,8 +53,8 @@ model Problem {
   spaceComplexity    String
   runtimeDistractors String
   spaceDistractors   String
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
   progress           Progress[]
   attempts           Attempt[]
   studyTasks         StudyTask[]

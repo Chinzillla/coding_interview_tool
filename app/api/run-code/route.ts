@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { chmod, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { NextResponse } from "next/server";
@@ -15,6 +15,15 @@ const runSchema = z.object({
   problemId: z.string(),
   code: z.string().min(1).max(20000)
 });
+
+function codeRunnerEnabled() {
+  const value = process.env.ENABLE_CODE_RUNNER;
+  if (typeof value === "string") {
+    return ["1", "true", "yes", "on"].includes(value.toLowerCase());
+  }
+
+  return process.env.NODE_ENV !== "production";
+}
 
 function pythonString(value: unknown) {
   return JSON.stringify(value);
@@ -187,7 +196,23 @@ type PythonRunResult = {
 
 function runPythonCandidate(command: string, args: string[], scriptPath: string) {
   return new Promise<PythonRunResult>((resolve) => {
+    const sandboxEnv = {
+      PATH: process.env.PATH ?? "",
+      PYTHONDONTWRITEBYTECODE: "1",
+      PYTHONIOENCODING: "utf-8",
+      ...(process.platform === "win32" ? { SystemRoot: process.env.SystemRoot ?? "" } : {})
+    } as unknown as NodeJS.ProcessEnv;
+    const sandboxUser =
+      process.platform === "win32"
+        ? {}
+        : {
+            uid: Number(process.env.PYTHON_RUNNER_UID ?? 65534),
+            gid: Number(process.env.PYTHON_RUNNER_GID ?? 65534)
+          };
     const child = spawn(command, [...args, scriptPath], {
+      cwd: path.dirname(scriptPath),
+      env: sandboxEnv,
+      ...sandboxUser,
       windowsHide: true,
       stdio: ["ignore", "pipe", "pipe"]
     });
@@ -260,6 +285,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (!codeRunnerEnabled()) {
+    return NextResponse.json({
+      supported: false,
+      message:
+        "Python execution is disabled for this deployment. Enable it only in a trusted local or private environment."
+    });
+  }
+
   const parsed = runSchema.safeParse(await request.json());
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid code run payload" }, { status: 400 });
@@ -287,6 +320,8 @@ export async function POST(request: Request) {
 
   try {
     await writeFile(scriptPath, buildPythonScript(parsed.data.code, suite), "utf8");
+    await chmod(workdir, 0o755).catch(() => null);
+    await chmod(scriptPath, 0o644).catch(() => null);
     const result = await runPython(scriptPath);
 
     if (result.timedOut) {

@@ -63,8 +63,20 @@ a {
   border-radius: 8px;
   box-shadow: var(--shadow);
   max-width: 470px;
+  min-width: 0;
   padding: 32px;
   width: 100%;
+}
+
+.login-panel h1 {
+  font-size: 1.85rem;
+  line-height: 1.08;
+  margin-bottom: 0;
+}
+
+.login-panel .brand-lockup > div,
+.login-form {
+  min-width: 0;
 }
 
 .brand-lockup,
@@ -178,6 +190,93 @@ textarea:focus {
   color: #8f2232;
   margin: 0;
   padding: 10px 12px;
+}
+
+.two-factor-setup {
+  background: #f8f3ea;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px;
+}
+
+.two-factor-setup strong,
+.two-factor-setup span,
+.two-factor-setup small {
+  display: block;
+}
+
+.two-factor-setup span,
+.two-factor-setup small {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.two-factor-setup code {
+  background: #20282a;
+  border-radius: 6px;
+  color: #f4fbf8;
+  display: block;
+  font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: 10px;
+}
+
+.setup-value-row {
+  align-items: stretch;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  min-width: 0;
+}
+
+.setup-copy-button {
+  align-items: center;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--accent-strong);
+  display: inline-flex;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0;
+}
+
+.setup-copy-button:hover {
+  border-color: #9bd0c6;
+  background: var(--accent-soft);
+}
+
+.setup-uri-details {
+  min-width: 0;
+}
+
+.setup-uri-details summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.setup-uri-details .setup-value-row {
+  margin-top: 8px;
+}
+
+.setup-uri-details small {
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: block;
+  line-height: 1.45;
+  max-height: 110px;
+  min-width: 0;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  padding: 9px 10px;
+  word-break: break-word;
 }
 
 .primary-button,
@@ -1553,5 +1652,52 @@ textarea:focus {
 
   .segmented-control {
     overflow-x: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-page {
+    align-items: flex-start;
+    min-height: 100dvh;
+    padding: 14px;
+  }
+
+  .login-panel {
+    padding: 20px;
+  }
+
+  .login-panel h1 {
+    font-size: 1.45rem;
+    line-height: 1.12;
+  }
+
+  .login-panel .brand-lockup {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .login-panel .brand-icon {
+    flex: 0 0 auto;
+    height: 38px;
+    width: 38px;
+  }
+
+  .login-form {
+    gap: 14px;
+    margin-top: 20px;
+  }
+
+  .two-factor-setup {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .setup-value-row {
+    grid-template-columns: 1fr;
+  }
+
+  .setup-copy-button {
+    min-height: 38px;
+    width: 100%;
   }
 }

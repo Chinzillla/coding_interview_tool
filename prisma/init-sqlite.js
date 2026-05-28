@@ -54,6 +54,8 @@ CREATE TABLE IF NOT EXISTS "User" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
+    "twoFactorSecret" TEXT,
+    "twoFactorEnabled" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -173,6 +175,8 @@ CREATE INDEX IF NOT EXISTS "StudyTask_status_idx" ON "StudyTask"("status");
 CREATE INDEX IF NOT EXISTS "StudyTask_type_idx" ON "StudyTask"("type");
 `);
 
+  ensureColumn(db, "User", "twoFactorSecret", "TEXT");
+  ensureColumn(db, "User", "twoFactorEnabled", "BOOLEAN NOT NULL DEFAULT false");
   ensureColumn(db, "Progress", "memoryDueAt", "DATETIME");
   ensureColumn(db, "Progress", "codeDueAt", "DATETIME");
   ensureColumn(db, "Progress", "runtimeDueAt", "DATETIME");

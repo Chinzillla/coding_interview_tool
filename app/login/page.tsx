@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { BrainCircuit } from "lucide-react";
-import { getCurrentUser, hasUsers } from "@/lib/auth";
+import { getCurrentUser, hasUsers, isSetupTokenRequired } from "@/lib/auth";
 import { LoginForm } from "@/components/LoginForm";
 
 export default async function LoginPage() {
@@ -8,6 +8,7 @@ export default async function LoginPage() {
   if (user) redirect("/dashboard");
 
   const setupMode = !(await hasUsers());
+  const setupTokenRequired = setupMode && isSetupTokenRequired();
 
   return (
     <main className="login-page">
@@ -23,10 +24,12 @@ export default async function LoginPage() {
         </div>
         <p className="login-copy">
           {setupMode
-            ? "Create your single-user account. This will seed the same private dashboard and learning workflow."
-            : "Sign in to continue reviewing memory, code, and complexity progress."}
+            ? setupTokenRequired
+              ? "Create your password with the setup token, then finish the one-time authenticator setup."
+              : "Create your password, then finish the one-time authenticator setup."
+            : "Sign in with your password and authenticator code to continue studying."}
         </p>
-        <LoginForm setupMode={setupMode} />
+        <LoginForm setupMode={setupMode} setupTokenRequired={setupTokenRequired} />
       </section>
     </main>
   );
